@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<robot name="rmp401" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:arg name="mesh_scale" default="1.0"/>
+  <xacro:property name="mesh_scale" value="$(arg mesh_scale)"/>
+
+  <!-- 치수 -->
+  <xacro:property name="base_len"     value="0.672"/>
+  <xacro:property name="base_wid"     value="0.598"/>
+  <xacro:property name="base_hgt"     value="0.280"/>
+  <xacro:property name="wheel_radius" value="0.108"/>
+  <xacro:property name="wheel_width"  value="0.053"/>
+  <xacro:property name="wheelbase"    value="0.456"/>
+  <xacro:property name="track"        value="0.545"/>
+
+  <!-- base 메쉬 보정(원점이 앞면-바닥 쪽일 때의 일반해) -->
+  <xacro:property name="base_vis_x" value="${-base_len/2}"/>
+  <xacro:property name="base_vis_y" value="0.0"/>
+  <xacro:property name="base_vis_z" value="${base_hgt/2 - wheel_radius}"/>
+  <xacro:arg name="base_rpy" default="${PI/2} 0 ${-PI/2}"/>
+
+  <!-- 파일 경로 -->
+  <xacro:property name="mesh_base"    value="package://rmp401_description/meshes/base.dae"/>
+  <xacro:property name="mesh_front_L" value="package://rmp401_description/meshes/front_left_wheel.dae"/>
+  <xacro:property name="mesh_rear_L"  value="package://rmp401_description/meshes/rear_left_wheel.dae"/>
+
+  <xacro:macro name="rmp401_base" params="prefix">
+    <link name="${prefix}base_footprint"/>
+    <joint name="${prefix}base_joint" type="fixed">
+      <parent link="${prefix}base_footprint"/>
+      <child  link="${prefix}base_link"/>
+      <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+    </joint>
+
+    <link name="${prefix}base_link">
+      <visual>
+        <origin xyz="${base_vis_x} ${base_vis_y} ${base_vis_z}" rpy="$(arg base_rpy)"/>
+        <geometry>
+          <mesh filename="${mesh_base}" scale="${mesh_scale} ${mesh_scale} ${mesh_scale}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 ${base_hgt/2 - wheel_radius}" rpy="0 0 0"/>
+        <geometry><box size="${base_len} ${base_wid} ${base_hgt}"/></geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0"/>
+        <mass value="65.0"/>
+        <inertia ixx="1.0" ixy="0" ixz="0" iyy="2.0" iyz="0" izz="2.5"/>
+      </inertial>
+    </link>
+
+    <!-- 휠 4개: 왼쪽은 -90°(X), 오른쪽은 +yaw π 추가 -->
+    <xacro:wheel name="${prefix}front_left"
+                 x="${ wheelbase/2}" y="${  track/2}"
+                 mesh="${mesh_front_L}" parent="${prefix}base_link"
+                 rpy_mesh="${-PI/2} 0 0" vis_xyz="0 0 0"/>
+    <xacro:wheel name="${prefix}front_right"
+                 x="${ wheelbase/2}" y="${- track/2}"
+                 mesh="${mesh_front_L}" parent="${prefix}base_link"
+                 rpy_mesh="${-PI/2} 0 ${PI}" vis_xyz="0 0 0"/>
+    <xacro:wheel name="${prefix}rear_left"
+                 x="${-wheelbase/2}" y="${  track/2}"
+                 mesh="${mesh_rear_L}" parent="${prefix}base_link"
+                 rpy_mesh="${-PI/2} 0 0" vis_xyz="0 0 0"/>
+    <xacro:wheel name="${prefix}rear_right"
+                 x="${-wheelbase/2}" y="${- track/2}"
+                 mesh="${mesh_rear_L}" parent="${prefix}base_link"
+                 rpy_mesh="${-PI/2} 0 ${PI}" vis_xyz="0 0 0"/>
+  </xacro:macro>
+
+  <xacro:macro name="wheel"
+               params="name x y mesh parent:='base_link' rpy_mesh:='-1.5708 0 0' vis_xyz:='0 0 0'">
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="${vis_xyz}" rpy="${rpy_mesh}"/>
+        <geometry>
+          <mesh filename="${mesh}" scale="${mesh_scale} ${mesh_scale} ${mesh_scale}"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="-1.5708 0 0"/>
+        <geometry><cylinder radius="${wheel_radius*0.98}" length="${wheel_width}"/></geometry>
+      </collision>
+      <inertial>
+        <origin xyz="0 0 0"/>
+        <mass value="2"/>
+        <inertia ixx="0.05" ixy="0" ixz="0" iyy="0.05" iyz="0" izz="0.05"/>
+      </inertial>
+    </link>
+
+    <joint name="${name}_joint" type="continuous">
+      <parent link="${parent}"/>
+      <child  link="${name}_link"/>
+      <origin xyz="${x} ${y} 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+  </xacro:macro>
+
+</robot>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot name="zed_mounts" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- 필요시 zed_wrapper 매크로 포함
+  <xacro:include filename="$(find zed_wrapper)/urdf/zed_macro.urdf.xacro"/>
+  -->
+
+  <!-- 단순 프레임만 잡는 버전(카메라 링크 포즈만 정의) -->
+  <xacro:macro name="mount_zed4" params="prefix">
+    <!-- front -->
+    <link name="${prefix}zed_front_cam_link"/>
+    <joint name="${prefix}zed_front_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}zed_front_cam_link"/>
+      <origin xyz="0.30 0.00 0.45" rpy="0 0 0"/> <!-- 전방 30cm, 높이 45cm -->
+    </joint>
+
+    <!-- left -->
+    <link name="${prefix}zed_left_cam_link"/>
+    <joint name="${prefix}zed_left_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}zed_left_cam_link"/>
+      <origin xyz="0.05 0.25 0.45" rpy="0 0 1.5708"/>
+    </joint>
+
+    <!-- right -->
+    <link name="${prefix}zed_right_cam_link"/>
+    <joint name="${prefix}zed_right_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}zed_right_cam_link"/>
+      <origin xyz="0.05 -0.25 0.45" rpy="0 0 -1.5708"/>
+    </joint>
+
+    <!-- back -->
+    <link name="${prefix}zed_back_cam_link"/>
+    <joint name="${prefix}zed_back_joint" type="fixed">
+      <parent link="${prefix}base_link"/>
+      <child  link="${prefix}zed_back_cam_link"/>
+      <origin xyz="-0.30 0.00 0.45" rpy="0 0 3.1416"/>
+    </joint>
+  </xacro:macro>
+</robot>

@@ -1,0 +1,35 @@
+/**:
+  ros__parameters:
+    serial_full_name: "rmp401"
+    
+    topic:
+      bms_fb: "bms_fb"
+      chassis_ctrl_src_fb: "chassis_ctrl_src_fb"
+      chassis_mileage_meter_fb: "chassis_mileage_meter_fb"
+      chassis_mode_fb: "chassis_mode_fb"
+      error_code_fb: "error_code_fb"
+      motor_work_mode_fb: "motor_work_mode_fb"
+      speed_fb: "speed_fb"
+      ticks_fb: "ticks_fb"
+      odom: "odom"
+      imu: "imu"
+      cmd_vel: "cmd_vel"
+
+    service:
+      set_chassis_enable: "set_chassis_enable"
+      set_chassis_poweroff: "set_chassis_poweroff"
+      set_charge_mos_ctrl: "set_charge_mos_ctrl"
+      set_load_param: "set_load_param"
+      set_remove_push: "set_remove_push"
+      set_vel_max: "set_vel_max"
+
+      get_charge_mos_ctrl_status: "get_charge_mos_ctrl_status"
+      get_load_param: "get_load_param"
+      get_sw_version: "get_sw_version"
+      get_vel_max_feedback: "get_vel_max_feedback"
+
+      event_client: "chassis_send_event_srv"  # service client 용
+
+    bins_directory: "/sdcard/firmware/"
+    central_version: "1.01"
+    motor_version: "1.01"

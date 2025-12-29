@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot name="rmp401" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find rmp401_description)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find rmp401_description)/urdf/rmp401_macro.xacro"/>
+  <xacro:include filename="$(find rmp401_description)/urdf/zed_mounts.xacro"/>
+
+  <xacro:arg name="prefix" default=""/>
+  <xacro:arg name="with_zed4" default="true"/>
+  <xacro:arg name="mesh_scale" default="1.0"/>  <!-- m단위 가정 -->
+
+  <xacro:rmp401_base prefix="$(arg prefix)"/>
+  <xacro:if value="$(arg with_zed4)">
+    <xacro:mount_zed4 prefix="$(arg prefix)"/>
+  </xacro:if>
+</robot>
